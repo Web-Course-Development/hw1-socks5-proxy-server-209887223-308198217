@@ -47,27 +47,26 @@ func main() {
 func handleConnection(conn net.Conn) {
 	defer conn.Close()
 
-	// TODO: Implement SOCKS5 protocol
-	// 1. Read client greeting and negotiate authentication method
+	//Read client greeting and negotiate authentication method
 	err := methodNegotiation(conn)
 	if err != nil {
 		return
 	}
-	// 2. Perform authentication if required (when PROXY_USER env var is set)
+	// Perform authentication if required (when PROXY_USER env var is set)
 	if authRequired {
 		err = authenticate(conn)
 		if err != nil {
 			return
 		}
 	}
-	// 3. Read CONNECT request and Dial target server
+	// Read CONNECT request and Dial target server
 	targetConn, err := handleConnectRequest(conn)
 	if err != nil {
 		return
 	}
 	defer targetConn.Close()
 
-	// 6. Relay data between client and target
+	// Relay data between client and target
 	relay(conn, targetConn)
 }
 func methodNegotiation(conn net.Conn) error {
